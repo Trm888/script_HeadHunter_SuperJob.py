@@ -32,12 +32,12 @@ def predict_rub_salary_for_superJob(language, secret_key):
     response = requests.get(api_url, headers=headers, params=params)
     response.raise_for_status()
     for vacancy in response.json()['objects']:
-        if vacancy['currency'] == 'rub' and (vacancy['payment_from'] != 0 or vacancy['payment_to'] != 0):
-            if vacancy['payment_from'] != 0 and vacancy['payment_to'] != 0:
+        if vacancy['currency'] == 'rub' and (vacancy['payment_from'] or vacancy['payment_to']):
+            if vacancy['payment_from'] and vacancy['payment_to']:
                 salaries.append((vacancy['payment_from'] + vacancy['payment_to']) // 2)
-            elif vacancy['payment_to'] == 0:
+            elif not vacancy['payment_to']:
                 salaries.append(vacancy['payment_from'] * 1.2)
-            elif vacancy['payment_from'] == 0:
+            elif not vacancy['payment_from']:
                 salaries.append(vacancy['payment_to'] * 0.8)
     return salaries
 
@@ -133,7 +133,7 @@ def main():
     information_on_vacancies_headhunter = get_information_on_vacancies_headhunter(languages)
     print(get_table_vacancies_superjob(information_on_vacancies_superjob))
     print()
-    print(get_table_vacancies_headhunter(information_on_vacancies_headhunter))
+    # print(get_table_vacancies_headhunter(information_on_vacancies_headhunter))
 
 if __name__ == '__main__':
     main()

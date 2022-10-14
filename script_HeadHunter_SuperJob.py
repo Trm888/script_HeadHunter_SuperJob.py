@@ -36,13 +36,15 @@ def predict_rub_salary_for_superJob(language, secret_key):
         response = requests.get(api_url, headers=headers, params=params)
         response.raise_for_status()
         for vacancy in response.json()['objects']:
-            if vacancy['currency'] == 'rub' and (vacancy['payment_from'] or vacancy['payment_to']):
-                if vacancy['payment_from'] and vacancy['payment_to']:
-                    salaries.append((vacancy['payment_from'] + vacancy['payment_to']) // 2)
-                elif not vacancy['payment_to']:
-                    salaries.append(vacancy['payment_from'] * 1.2)
-                elif not vacancy['payment_from']:
-                    salaries.append(vacancy['payment_to'] * 0.8)
+            salary_from = vacancy['payment_from']
+            salary_to = vacancy['payment_to']
+            if vacancy['currency'] == 'rub' and (salary_from or salary_to):
+                if salary_from and salary_to:
+                    salaries.append((salary_from + salary_to) // 2)
+                elif not salary_to:
+                    salaries.append(salary_from * 1.2)
+                elif not salary_from:
+                    salaries.append(salary_to * 0.8)
         pages_number = (response.json()['total'] - 1) / 100
         page += 1
     return salaries
@@ -98,13 +100,15 @@ def predict_rub_salary_headhunter(vacancy):
         response.raise_for_status()
         for vacancy in response.json()['items']:
             if vacancy['salary'] is not None:
+                salary_from = vacancy['salary']['from']
+                salary_to = vacancy['salary']['to']
                 if vacancy['salary']['currency'] == 'RUR':
-                    if vacancy['salary']['from'] and vacancy['salary']['to']:
-                        salaries.append((vacancy['salary']['from'] + vacancy['salary']['to']) // 2)
-                    elif vacancy['salary']['from']:
-                        salaries.append(vacancy['salary']['from'] * 1.2)
-                    elif vacancy['salary']['to']:
-                        salaries.append(vacancy['salary']['to'] * 0.8)
+                    if salary_from and salary_to:
+                        salaries.append((salary_from + salary_to) // 2)
+                    elif salary_from:
+                        salaries.append(salary_from * 1.2)
+                    elif salary_to:
+                        salaries.append(salary_to * 0.8)
         pages_number = response.json()['pages']
         page += 1
     return salaries
@@ -146,5 +150,3 @@ def main():
 if __name__ == '__main__':
     main()
 
-    # print()
-    # print(get_table_vacancies_headhunter(languages))

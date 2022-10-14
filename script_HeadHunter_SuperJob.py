@@ -48,22 +48,25 @@ def predict_rub_salary_for_superJob(language):
     return salaries
 
 
-def get_table_vacancies_superjob(languages):
-    information_on_vacancies_table = [
+def get_information_on_vacancies_superjob(languages):
+    information_on_vacancies = [
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']
     ]
     for language in languages:
         if predict_rub_salary_for_superJob(language):
-            information_on_vacancies_table.append([language, get_quantity_vacancies_for_superJob(language),
+            information_on_vacancies.append([language, get_quantity_vacancies_for_superJob(language),
                                                    len(predict_rub_salary_for_superJob(language)),
                                                    int(mean(predict_rub_salary_for_superJob(language)))])
         else:
-            information_on_vacancies_table.append([language, get_quantity_vacancies_for_superJob(language),
+            information_on_vacancies.append([language, get_quantity_vacancies_for_superJob(language),
                                                    len(predict_rub_salary_for_superJob(language)),
                                                    0])
+    return information_on_vacancies
+
+def get_table_vacancies_superjob(information_on_vacancies):
     title = '+SuperJob Moscow'
-    table_instance = AsciiTable(information_on_vacancies_table, title)
+    table_instance = AsciiTable(information_on_vacancies, title)
     return table_instance.table
 
 
@@ -105,20 +108,22 @@ def predict_rub_salary_headhunter(vacancy):
     return salaries
 
 
-def get_table_vacancies_headhunter(languages):
-    information_on_vacancies_table = [
+def get_information_on_vacancies_headhunter(languages):
+    information_on_vacancies = [
         ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата']]
     for language in languages:
         if predict_rub_salary_headhunter(language):
-            information_on_vacancies_table.append([language, get_quantity_vacancies(language),
+            information_on_vacancies.append([language, get_quantity_vacancies(language),
                                                    len(predict_rub_salary_headhunter(language)),
                                                    int(mean(predict_rub_salary_headhunter(language)))])
         else:
-            information_on_vacancies_table.append([language, get_quantity_vacancies(language),
+            information_on_vacancies.append([language, get_quantity_vacancies(language),
                                                    len(predict_rub_salary_headhunter(language)),
                                                    0])
+    return information_on_vacancies
+def get_table_vacancies_headhunter(information_on_vacancies):
     title = '+HeadHunter Moscow'
-    table_instance = AsciiTable(information_on_vacancies_table, title)
+    table_instance = AsciiTable(information_on_vacancies, title)
     return table_instance.table
 
 

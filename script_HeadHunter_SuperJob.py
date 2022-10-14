@@ -8,10 +8,11 @@ from terminaltables import AsciiTable
 def get_quantity_vacancies_for_superJob(language, secret_key):
     api_url = 'https://api.superjob.ru/2.0/vacancies/'
     headers = {'X-Api-App-Id': secret_key}
+    moscow_id = 4
     params = {'srws': 1,
               'skwc': 'particular',
               'keys': f'{language}',
-              'town': 4}
+              'town': moscow_id}
     response = requests.get(api_url, headers=headers, params=params)
     response.raise_for_status()
     return response.json()['total']
@@ -20,23 +21,30 @@ def get_quantity_vacancies_for_superJob(language, secret_key):
 def predict_rub_salary_for_superJob(language, secret_key):
     api_url = 'https://api.superjob.ru/2.0/vacancies/'
     headers = {'X-Api-App-Id': secret_key}
-    params = {'srws': 1,
-              'skwc': 'particular',
-              'keys': f'{language}',
-              'town': 4,
-              'count': 100,
-              'page': 0}
+    moscow_id = 4
+    page = 0
+    pages_number = 1
     salaries = []
-    response = requests.get(api_url, headers=headers, params=params)
-    response.raise_for_status()
-    for vacancy in response.json()['objects']:
-        if vacancy['currency'] == 'rub' and (vacancy['payment_from'] or vacancy['payment_to']):
-            if vacancy['payment_from'] and vacancy['payment_to']:
-                salaries.append((vacancy['payment_from'] + vacancy['payment_to']) // 2)
-            elif not vacancy['payment_to']:
-                salaries.append(vacancy['payment_from'] * 1.2)
-            elif not vacancy['payment_from']:
-                salaries.append(vacancy['payment_to'] * 0.8)
+    while page < pages_number:
+        params = {'srws': 1,
+                  'skwc': 'particular',
+                  'keys': f'{language}',
+                  'town': moscow_id,
+                  'count': 100,
+                  'page': page}
+
+        response = requests.get(api_url, headers=headers, params=params)
+        response.raise_for_status()
+        for vacancy in response.json()['objects']:
+            if vacancy['currency'] == 'rub' and (vacancy['payment_from'] or vacancy['payment_to']):
+                if vacancy['payment_from'] and vacancy['payment_to']:
+                    salaries.append((vacancy['payment_from'] + vacancy['payment_to']) // 2)
+                elif not vacancy['payment_to']:
+                    salaries.append(vacancy['payment_from'] * 1.2)
+                elif not vacancy['payment_from']:
+                    salaries.append(vacancy['payment_to'] * 0.8)
+        pages_number = (response.json()['total'] - 1) / 100
+        page += 1
     return salaries
 
 
@@ -64,8 +72,9 @@ def get_table_vacancies_superjob(information_on_vacancies):
 
 def get_quantity_vacancies(language):
     api_url = 'https://api.hh.ru/vacancies'
+    moscow_id = 1
     params = {'text': f'программист {language}',
-              'area': 1,
+              'area': moscow_id,
               'period': 30}
     response = requests.get(api_url, params=params)
     response.raise_for_status()
@@ -75,11 +84,12 @@ def get_quantity_vacancies(language):
 def predict_rub_salary_headhunter(vacancy):
     salaries = []
     api_url = 'https://api.hh.ru/vacancies'
+    moscow_id = 1
     page = 0
     pages_number = 1
     while page < pages_number:
         params = {'text': f'программист {vacancy}',
-                  'area': 1,
+                  'area': moscow_id,
                   'period': 30,
                   'only with salary': 'true',
                   'page': page
@@ -131,7 +141,7 @@ def main():
     information_on_vacancies_headhunter = get_information_on_vacancies_headhunter(languages)
     print(get_table_vacancies_superjob(information_on_vacancies_superjob))
     print()
-    # print(get_table_vacancies_headhunter(information_on_vacancies_headhunter))
+    print(get_table_vacancies_headhunter(information_on_vacancies_headhunter))
 
 if __name__ == '__main__':
     main()

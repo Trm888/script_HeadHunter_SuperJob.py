@@ -11,9 +11,7 @@ def get_quantity_vacancies_for_superJob(language, secret_key):
     params = {'srws': 1,
               'skwc': 'particular',
               'keys': f'{language}',
-              'town': 4,
-              'count': 100,
-              'page': 0}
+              'town': 4}
     response = requests.get(api_url, headers=headers, params=params)
     response.raise_for_status()
     return response.json()['total']

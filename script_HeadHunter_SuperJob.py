@@ -54,15 +54,15 @@ def get_information_on_vacancies_superjob(languages):
          'Вакансий обработано', 'Средняя зарплата']
     ]
     for language in languages:
+        quantity_vacancies = get_quantity_vacancies_for_superJob(language)
+        number_of_processed_vacancies = len(predict_rub_salary_for_superJob(language))
+        average_salary = 0
         if predict_rub_salary_for_superJob(language):
-            information_on_vacancies.append([language, get_quantity_vacancies_for_superJob(language),
-                                                   len(predict_rub_salary_for_superJob(language)),
-                                                   int(mean(predict_rub_salary_for_superJob(language)))])
-        else:
-            information_on_vacancies.append([language, get_quantity_vacancies_for_superJob(language),
-                                                   len(predict_rub_salary_for_superJob(language)),
-                                                   0])
+            average_salary = int(mean(predict_rub_salary_for_superJob(language)))
+        information_on_vacancies.append([language, quantity_vacancies,
+                                        number_of_processed_vacancies, average_salary])
     return information_on_vacancies
+
 
 def get_table_vacancies_superjob(information_on_vacancies):
     title = '+SuperJob Moscow'
@@ -110,17 +110,20 @@ def predict_rub_salary_headhunter(vacancy):
 
 def get_information_on_vacancies_headhunter(languages):
     information_on_vacancies = [
-        ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата']]
+        ['Язык программирования', 'Вакансий найдено',
+         'Вакансий обработано', 'Средняя зарплата']]
     for language in languages:
+        quantity_vacancies = get_quantity_vacancies(language)
+        number_of_processed_vacancies = len(predict_rub_salary_headhunter(language))
+        average_salary = 0
         if predict_rub_salary_headhunter(language):
-            information_on_vacancies.append([language, get_quantity_vacancies(language),
-                                                   len(predict_rub_salary_headhunter(language)),
-                                                   int(mean(predict_rub_salary_headhunter(language)))])
-        else:
-            information_on_vacancies.append([language, get_quantity_vacancies(language),
-                                                   len(predict_rub_salary_headhunter(language)),
-                                                   0])
+            average_salary = int(mean(predict_rub_salary_headhunter(language)))
+        information_on_vacancies.append([language, quantity_vacancies,
+                                        number_of_processed_vacancies,
+                                         average_salary])
     return information_on_vacancies
+
+
 def get_table_vacancies_headhunter(information_on_vacancies):
     title = '+HeadHunter Moscow'
     table_instance = AsciiTable(information_on_vacancies, title)
@@ -129,6 +132,8 @@ def get_table_vacancies_headhunter(information_on_vacancies):
 
 if __name__ == '__main__':
     languages = ['Java', 'Javascript', 'Python', 'C++', 'Swift', 'Go', 'Ruby', 'C#']
-    print(get_table_vacancies_superjob(languages))
-    print()
-    print(get_table_vacancies_headhunter(languages))
+    print(get_information_on_vacancies_headhunter(languages))
+
+    # print(get_table_vacancies_superjob(languages))
+    # print()
+    # print(get_table_vacancies_headhunter(languages))

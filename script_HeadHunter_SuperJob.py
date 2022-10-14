@@ -5,10 +5,7 @@ from environs import Env
 from terminaltables import AsciiTable
 
 
-def get_quantity_vacancies_for_superJob(language):
-    env = Env()
-    env.read_env()
-    secret_key = env.str("SECRET_KEY")
+def get_quantity_vacancies_for_superJob(language, secret_key):
     api_url = 'https://api.superjob.ru/2.0/vacancies/'
     headers = {'X-Api-App-Id': secret_key}
     params = {'srws': 1,
@@ -22,10 +19,7 @@ def get_quantity_vacancies_for_superJob(language):
     return response.json()['total']
 
 
-def predict_rub_salary_for_superJob(language):
-    env = Env()
-    env.read_env()
-    secret_key = env.str("SECRET_KEY")
+def predict_rub_salary_for_superJob(language, secret_key):
     api_url = 'https://api.superjob.ru/2.0/vacancies/'
     headers = {'X-Api-App-Id': secret_key}
     params = {'srws': 1,
@@ -48,17 +42,17 @@ def predict_rub_salary_for_superJob(language):
     return salaries
 
 
-def get_information_on_vacancies_superjob(languages):
+def get_information_on_vacancies_superjob(languages, secret_key):
     information_on_vacancies = [
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']
     ]
     for language in languages:
-        quantity_vacancies = get_quantity_vacancies_for_superJob(language)
-        number_of_processed_vacancies = len(predict_rub_salary_for_superJob(language))
+        quantity_vacancies = get_quantity_vacancies_for_superJob(language, secret_key)
+        number_of_processed_vacancies = len(predict_rub_salary_for_superJob(language, secret_key))
         average_salary = 0
-        if predict_rub_salary_for_superJob(language):
-            average_salary = int(mean(predict_rub_salary_for_superJob(language)))
+        if predict_rub_salary_for_superJob(language, secret_key):
+            average_salary = int(mean(predict_rub_salary_for_superJob(language, secret_key)))
         information_on_vacancies.append([language, quantity_vacancies,
                                         number_of_processed_vacancies, average_salary])
     return information_on_vacancies
@@ -124,16 +118,25 @@ def get_information_on_vacancies_headhunter(languages):
     return information_on_vacancies
 
 
-def get_table_vacancies_headhunter(information_on_vacancies):
+def get_table_vacancies_headhunter(information_on_vacancies_headhunter):
     title = '+HeadHunter Moscow'
-    table_instance = AsciiTable(information_on_vacancies, title)
+    table_instance = AsciiTable(information_on_vacancies_headhunter, title)
     return table_instance.table
 
 
-if __name__ == '__main__':
+def main():
+    env = Env()
+    env.read_env()
+    secret_key = env.str("SECRET_KEY_SUPERJOB")
     languages = ['Java', 'Javascript', 'Python', 'C++', 'Swift', 'Go', 'Ruby', 'C#']
-    print(get_information_on_vacancies_headhunter(languages))
+    information_on_vacancies_superjob = get_information_on_vacancies_superjob(languages, secret_key)
+    information_on_vacancies_headhunter = get_information_on_vacancies_headhunter(languages)
+    print(get_table_vacancies_superjob(information_on_vacancies_superjob))
+    print()
+    print(get_table_vacancies_headhunter(information_on_vacancies_headhunter))
 
-    # print(get_table_vacancies_superjob(languages))
+if __name__ == '__main__':
+    main()
+
     # print()
     # print(get_table_vacancies_headhunter(languages))

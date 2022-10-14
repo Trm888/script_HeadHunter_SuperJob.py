@@ -47,12 +47,12 @@ def get_information_on_vacancies_superjob(languages, secret_key):
     ]
     for language in languages:
         quantity_vacancies = get_quantity_vacancies_for_superJob(language, secret_key)
-        number_of_processed_vacancies = len(predict_rub_salary_for_superJob(language, secret_key))
+        salaries_from_superjob = predict_rub_salary_for_superJob(language, secret_key)
         average_salary = 0
-        if predict_rub_salary_for_superJob(language, secret_key):
-            average_salary = int(mean(predict_rub_salary_for_superJob(language, secret_key)))
+        if salaries_from_superjob:
+            average_salary = int(mean(salaries_from_superjob))
         information_on_vacancies.append([language, quantity_vacancies,
-                                        number_of_processed_vacancies, average_salary])
+                                        len(salaries_from_superjob), average_salary])
     return information_on_vacancies
 
 
@@ -106,12 +106,12 @@ def get_information_on_vacancies_headhunter(languages):
          'Вакансий обработано', 'Средняя зарплата']]
     for language in languages:
         quantity_vacancies = get_quantity_vacancies(language)
-        number_of_processed_vacancies = len(predict_rub_salary_headhunter(language))
+        salaries_from_headhunter = predict_rub_salary_headhunter(language)
         average_salary = 0
-        if predict_rub_salary_headhunter(language):
-            average_salary = int(mean(predict_rub_salary_headhunter(language)))
+        if salaries_from_headhunter:
+            average_salary = int(mean(salaries_from_headhunter))
         information_on_vacancies.append([language, quantity_vacancies,
-                                        number_of_processed_vacancies,
+                                        len(salaries_from_headhunter),
                                          average_salary])
     return information_on_vacancies
 

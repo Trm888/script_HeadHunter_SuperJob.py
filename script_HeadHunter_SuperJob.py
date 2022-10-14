@@ -31,14 +31,14 @@ def predict_rub_salary_for_superJob(language, secret_key):
     salaries = []
     response = requests.get(api_url, headers=headers, params=params)
     response.raise_for_status()
-    for i in response.json()['objects']:
-        if i['currency'] == 'rub' and (i['payment_from'] != 0 or i['payment_to'] != 0):
-            if i['payment_from'] != 0 and i['payment_to'] != 0:
-                salaries.append((i['payment_from'] + i['payment_to']) // 2)
-            elif i['payment_to'] == 0:
-                salaries.append(i['payment_from'] * 1.2)
-            elif i['payment_from'] == 0:
-                salaries.append(i['payment_to'] * 0.8)
+    for vacancy in response.json()['objects']:
+        if vacancy['currency'] == 'rub' and (vacancy['payment_from'] != 0 or vacancy['payment_to'] != 0):
+            if vacancy['payment_from'] != 0 and vacancy['payment_to'] != 0:
+                salaries.append((vacancy['payment_from'] + vacancy['payment_to']) // 2)
+            elif vacancy['payment_to'] == 0:
+                salaries.append(vacancy['payment_from'] * 1.2)
+            elif vacancy['payment_from'] == 0:
+                salaries.append(vacancy['payment_to'] * 0.8)
     return salaries
 
 
@@ -88,15 +88,15 @@ def predict_rub_salary_headhunter(vacancy):
                   }
         response = requests.get(api_url, params=params)
         response.raise_for_status()
-        for i in response.json()['items']:
-            if i['salary'] is not None:
-                if i['salary']['currency'] == 'RUR':
-                    if i['salary']['from'] and i['salary']['to']:
-                        salaries.append((i['salary']['from'] + i['salary']['to']) // 2)
-                    elif i['salary']['from']:
-                        salaries.append(i['salary']['from'] * 1.2)
-                    elif i['salary']['to']:
-                        salaries.append(i['salary']['to'] * 0.8)
+        for vacancy in response.json()['items']:
+            if vacancy['salary'] is not None:
+                if vacancy['salary']['currency'] == 'RUR':
+                    if vacancy['salary']['from'] and vacancy['salary']['to']:
+                        salaries.append((vacancy['salary']['from'] + vacancy['salary']['to']) // 2)
+                    elif vacancy['salary']['from']:
+                        salaries.append(vacancy['salary']['from'] * 1.2)
+                    elif vacancy['salary']['to']:
+                        salaries.append(vacancy['salary']['to'] * 0.8)
         pages_number = response.json()['pages']
         page += 1
     return salaries

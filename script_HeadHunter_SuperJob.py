@@ -51,7 +51,7 @@ def predict_rub_salary_for_superJob(language, secret_key):
 
 
 def get_information_on_vacancies_superjob(languages, secret_key):
-    information_on_vacancies = [
+    vacancies = [
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']
     ]
@@ -61,9 +61,9 @@ def get_information_on_vacancies_superjob(languages, secret_key):
         average_salary = 0
         if salaries_from_superjob:
             average_salary = int(mean(salaries_from_superjob))
-        information_on_vacancies.append([language, quantity_vacancies,
+        vacancies.append([language, quantity_vacancies,
                                         len(salaries_from_superjob), average_salary])
-    return information_on_vacancies
+    return vacancies
 
 
 def get_table_vacancies_superjob(information_on_vacancies):
@@ -115,7 +115,7 @@ def predict_rub_salary_headhunter(vacancy):
 
 
 def get_information_on_vacancies_headhunter(languages):
-    information_on_vacancies = [
+    vacancies = [
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']]
     for language in languages:
@@ -124,10 +124,10 @@ def get_information_on_vacancies_headhunter(languages):
         average_salary = 0
         if salaries_from_headhunter:
             average_salary = int(mean(salaries_from_headhunter))
-        information_on_vacancies.append([language, quantity_vacancies,
+        vacancies.append([language, quantity_vacancies,
                                         len(salaries_from_headhunter),
                                          average_salary])
-    return information_on_vacancies
+    return vacancies
 
 
 def get_table_vacancies_headhunter(information_on_vacancies_headhunter):
@@ -141,11 +141,11 @@ def main():
     env.read_env()
     secret_key = env.str("SECRET_KEY_SUPERJOB")
     languages = ['Java', 'Javascript', 'Python', 'C++', 'Swift', 'Go', 'Ruby', 'C#']
-    information_on_vacancies_superjob = get_information_on_vacancies_superjob(languages, secret_key)
-    information_on_vacancies_headhunter = get_information_on_vacancies_headhunter(languages)
-    print(get_table_vacancies_superjob(information_on_vacancies_superjob))
+    vacancies_superjob = get_information_on_vacancies_superjob(languages, secret_key)
+    vacancies_headhunter = get_information_on_vacancies_headhunter(languages)
+    print(get_table_vacancies_superjob(vacancies_superjob))
     print()
-    print(get_table_vacancies_headhunter(information_on_vacancies_headhunter))
+    print(get_table_vacancies_headhunter(vacancies_headhunter))
 
 if __name__ == '__main__':
     main()

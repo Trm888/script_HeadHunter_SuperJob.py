@@ -87,7 +87,6 @@ def predict_rub_salary_headhunter(vacancy):
     while page < pages_number:
         params = {'text': f'программист {vacancy}',
                   'area': moscow_id,
-                  'period': 30,
                   'only with salary': 'true',
                   'page': page
                   }

@@ -78,14 +78,14 @@ def get_table_vacancies_superjob(information_on_vacancies):
 
 
 
-def predict_rub_salary_headhunter(vacancy):
+def predict_rub_salary_headhunter(language):
     salaries = []
     api_url = 'https://api.hh.ru/vacancies'
     moscow_id = 1
     page = 0
     pages_number = 1
     while page < pages_number:
-        params = {'text': f'программист {vacancy}',
+        params = {'text': f'программист {language}',
                   'area': moscow_id,
                   'only with salary': 'true',
                   'page': page

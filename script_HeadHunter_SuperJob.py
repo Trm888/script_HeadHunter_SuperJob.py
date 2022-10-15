@@ -34,7 +34,8 @@ def predict_rub_salary_for_superJob(language, secret_key):
 
         response = requests.get(api_url, headers=headers, params=params)
         response.raise_for_status()
-        for vacancy in response.json()['objects']:
+        vacancies = response.json()['objects']
+        for vacancy in vacancies:
             salary_from = vacancy['payment_from']
             salary_to = vacancy['payment_to']
             if vacancy['currency'] == 'rub' and (salary_from or salary_to):
@@ -92,7 +93,8 @@ def predict_rub_salary_headhunter(vacancy):
                   }
         response = requests.get(api_url, params=params)
         response.raise_for_status()
-        for vacancy in response.json()['items']:
+        vacancies = response.json()['items']
+        for vacancy in vacancies:
             if vacancy['salary'] is not None:
                 salary_from = vacancy['salary']['from']
                 salary_to = vacancy['salary']['to']

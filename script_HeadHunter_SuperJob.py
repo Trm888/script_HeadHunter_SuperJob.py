@@ -61,12 +61,11 @@ def get_vacancies_superjob(languages, secret_key):
                   'town': moscow_id}
         response = requests.get(api_url, headers=headers, params=params)
         response.raise_for_status()
-        quantity_vacancies = response.json()['total']
         salaries_from_superjob = predict_rub_salary_for_superJob(language, secret_key)
         average_salary = 0
         if salaries_from_superjob:
             average_salary = int(mean(salaries_from_superjob))
-        vacancies.append([language, quantity_vacancies,
+        vacancies.append([language, response.json()['total'],
                           len(salaries_from_superjob), average_salary])
     return vacancies
 
@@ -116,12 +115,11 @@ def get_vacancies_headhunter(languages):
                   'period': 30}
         response = requests.get(api_url, params=params)
         response.raise_for_status()
-        quantity_vacancies = response.json()['found']
         salaries_from_headhunter = predict_rub_salary_headhunter(language)
         average_salary = 0
         if salaries_from_headhunter:
             average_salary = int(mean(salaries_from_headhunter))
-        vacancies.append([language, quantity_vacancies,
+        vacancies.append([language, response.json()['found'],
                           len(salaries_from_headhunter),
                           average_salary])
     return vacancies

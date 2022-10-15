@@ -5,17 +5,16 @@ from environs import Env
 from terminaltables import AsciiTable
 
 
-def get_quantity_vacancies_for_superJob(language, secret_key):
-    api_url = 'https://api.superjob.ru/2.0/vacancies/'
-    headers = {'X-Api-App-Id': secret_key}
-    moscow_id = 4
-    params = {'srws': 1,
-              'skwc': 'particular',
-              'keys': f'{language}',
-              'town': moscow_id}
-    response = requests.get(api_url, headers=headers, params=params)
-    response.raise_for_status()
-    return response.json()['total']
+def calculate_expected_salary(salary_from, salary_to):
+    salary = 0
+    if salary_from and salary_to:
+        salary = (salary_from + salary_to) // 2
+    elif not salary_to:
+        salary = salary_from * 1.2
+    elif not salary_from:
+        salary = salary_to * 0.8
+    return salary
+
 
 
 def predict_rub_salary_for_superJob(language, secret_key):
@@ -39,12 +38,7 @@ def predict_rub_salary_for_superJob(language, secret_key):
             salary_from = vacancy['payment_from']
             salary_to = vacancy['payment_to']
             if vacancy['currency'] == 'rub' and (salary_from or salary_to):
-                if salary_from and salary_to:
-                    salaries.append((salary_from + salary_to) // 2)
-                elif not salary_to:
-                    salaries.append(salary_from * 1.2)
-                elif not salary_from:
-                    salaries.append(salary_to * 0.8)
+                salaries.append(calculate_expected_salary(salary_from, salary_to))
         pages_number = (response.json()['total'] - 1) / 100
         page += 1
     return salaries
@@ -55,14 +49,24 @@ def get_information_on_vacancies_superjob(languages, secret_key):
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']
     ]
+
     for language in languages:
-        quantity_vacancies = get_quantity_vacancies_for_superJob(language, secret_key)
+        api_url = 'https://api.superjob.ru/2.0/vacancies/'
+        headers = {'X-Api-App-Id': secret_key}
+        moscow_id = 4
+        params = {'srws': 1,
+                  'skwc': 'particular',
+                  'keys': f'{language}',
+                  'town': moscow_id}
+        response = requests.get(api_url, headers=headers, params=params)
+        response.raise_for_status()
+        quantity_vacancies = response.json()['total']
         salaries_from_superjob = predict_rub_salary_for_superJob(language, secret_key)
         average_salary = 0
         if salaries_from_superjob:
             average_salary = int(mean(salaries_from_superjob))
         vacancies.append([language, quantity_vacancies,
-                                        len(salaries_from_superjob), average_salary])
+                          len(salaries_from_superjob), average_salary])
     return vacancies
 
 
@@ -71,16 +75,6 @@ def get_table_vacancies_superjob(information_on_vacancies):
     table_instance = AsciiTable(information_on_vacancies, title)
     return table_instance.table
 
-
-def get_quantity_vacancies(language):
-    api_url = 'https://api.hh.ru/vacancies'
-    moscow_id = 1
-    params = {'text': f'программист {language}',
-              'area': moscow_id,
-              'period': 30}
-    response = requests.get(api_url, params=params)
-    response.raise_for_status()
-    return response.json()['found']
 
 
 def predict_rub_salary_headhunter(vacancy):
@@ -103,12 +97,7 @@ def predict_rub_salary_headhunter(vacancy):
                 salary_from = vacancy['salary']['from']
                 salary_to = vacancy['salary']['to']
                 if vacancy['salary']['currency'] == 'RUR':
-                    if salary_from and salary_to:
-                        salaries.append((salary_from + salary_to) // 2)
-                    elif salary_from:
-                        salaries.append(salary_from * 1.2)
-                    elif salary_to:
-                        salaries.append(salary_to * 0.8)
+                    salaries.append(calculate_expected_salary(salary_from, salary_to))
         pages_number = response.json()['pages']
         page += 1
     return salaries
@@ -119,14 +108,21 @@ def get_information_on_vacancies_headhunter(languages):
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']]
     for language in languages:
-        quantity_vacancies = get_quantity_vacancies(language)
+        api_url = 'https://api.hh.ru/vacancies'
+        moscow_id = 1
+        params = {'text': f'программист {language}',
+                  'area': moscow_id,
+                  'period': 30}
+        response = requests.get(api_url, params=params)
+        response.raise_for_status()
+        quantity_vacancies = response.json()['found']
         salaries_from_headhunter = predict_rub_salary_headhunter(language)
         average_salary = 0
         if salaries_from_headhunter:
             average_salary = int(mean(salaries_from_headhunter))
         vacancies.append([language, quantity_vacancies,
-                                        len(salaries_from_headhunter),
-                                         average_salary])
+                          len(salaries_from_headhunter),
+                          average_salary])
     return vacancies
 
 
@@ -147,6 +143,6 @@ def main():
     print()
     print(get_table_vacancies_headhunter(vacancies_headhunter))
 
+
 if __name__ == '__main__':
     main()
-

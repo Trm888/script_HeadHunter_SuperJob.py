@@ -45,7 +45,7 @@ def predict_rub_salary_for_superJob(language, secret_key):
     return salaries
 
 
-def get_information_on_vacancies_superjob(languages, secret_key):
+def get_vacancies_superjob(languages, secret_key):
     vacancies = [
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']
@@ -104,7 +104,7 @@ def predict_rub_salary_headhunter(language):
     return salaries
 
 
-def get_information_on_vacancies_headhunter(languages):
+def get_vacancies_headhunter(languages):
     vacancies = [
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']]
@@ -138,8 +138,8 @@ def main():
     env.read_env()
     secret_key = env.str("SECRET_KEY_SUPERJOB")
     languages = ['Java', 'Javascript', 'Python', 'C++', 'Swift', 'Go', 'Ruby', 'C#']
-    vacancies_superjob = get_information_on_vacancies_superjob(languages, secret_key)
-    vacancies_headhunter = get_information_on_vacancies_headhunter(languages)
+    vacancies_superjob = get_vacancies_superjob(languages, secret_key)
+    vacancies_headhunter = get_vacancies_headhunter(languages)
     print(get_table_vacancies_superjob(vacancies_superjob))
     print()
     print(get_table_vacancies_headhunter(vacancies_headhunter))

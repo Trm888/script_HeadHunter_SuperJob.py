@@ -16,7 +16,7 @@ def calculate_expected_salary(salary_from, salary_to):
     return salary
 
 
-def get_job_stats_superJob(language, secret_key):
+def get_language_stats_superJob(language, secret_key):
     api_url = 'https://api.superjob.ru/2.0/vacancies/'
     headers = {'X-Api-App-Id': secret_key}
     moscow_id = 4
@@ -41,8 +41,8 @@ def get_job_stats_superJob(language, secret_key):
                 salaries.append(calculate_expected_salary(salary_from, salary_to))
         pages_number = (vacancies['total'] - 1) / 100
         page += 1
-    job_stats = [vacancies['total'], salaries]
-    return job_stats
+    language_stats = [vacancies['total'], salaries]
+    return language_stats
 
 
 def collect_statistics_by_languages_superjob(languages, secret_key):
@@ -51,7 +51,7 @@ def collect_statistics_by_languages_superjob(languages, secret_key):
          'Вакансий обработано', 'Средняя зарплата']
     ]
     for language in languages:
-        job_stats = get_job_stats_superJob(language, secret_key)
+        job_stats = get_language_stats_superJob(language, secret_key)
         average_salary = 0
         if job_stats[1]:
             average_salary = int(mean(job_stats[1]))
@@ -60,13 +60,7 @@ def collect_statistics_by_languages_superjob(languages, secret_key):
     return stats
 
 
-def get_table_vacancies_superjob(information_on_vacancies):
-    title = '+SuperJob Moscow'
-    table_instance = AsciiTable(information_on_vacancies, title)
-    return table_instance.table
-
-
-def get_job_stats_headhunter(language):
+def get_language_stats_headhunter(language):
     salaries = []
     api_url = 'https://api.hh.ru/vacancies'
     moscow_id = 1
@@ -89,8 +83,8 @@ def get_job_stats_headhunter(language):
                     salaries.append(calculate_expected_salary(salary_from, salary_to))
         pages_number = vacancies['pages']
         page += 1
-    job_stats = [vacancies['found'], salaries]
-    return job_stats
+    language_stats = [vacancies['found'], salaries]
+    return language_stats
 
 
 def collect_statistics_by_languages_headhunter(languages):
@@ -98,7 +92,7 @@ def collect_statistics_by_languages_headhunter(languages):
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']]
     for language in languages:
-        job_stats = get_job_stats_headhunter(language)
+        job_stats = get_language_stats_headhunter(language)
         average_salary = 0
         if job_stats[1]:
             average_salary = int(mean(job_stats[1]))
@@ -108,8 +102,8 @@ def collect_statistics_by_languages_headhunter(languages):
     return stats
 
 
-def get_table_vacancies_headhunter(information_on_vacancies_headhunter):
-    title = '+HeadHunter Moscow'
+def get_table_vacancies(information_on_vacancies_headhunter, title):
+    # title = '+HeadHunter Moscow'
     table_instance = AsciiTable(information_on_vacancies_headhunter, title)
     return table_instance.table
 
@@ -119,11 +113,11 @@ def main():
     env.read_env()
     secret_key = env.str("SECRET_KEY_SUPERJOB")
     languages = ['Java', 'Javascript', 'Python', 'C++', 'Swift', 'Go', 'Ruby', 'C#']
-    vacancies_superjob = get_vacancies_superjob(languages, secret_key)
-    vacancies_headhunter = get_vacancies_headhunter(languages)
-    print(get_table_vacancies_superjob(vacancies_superjob))
+    vacancies_superjob = collect_statistics_by_languages_superjob(languages, secret_key)
+    vacancies_headhunter = collect_statistics_by_languages_headhunter(languages)
+    print(get_table_vacancies(vacancies_superjob, title='+SuperJob Moscow'))
     print()
-    print(get_table_vacancies_headhunter(vacancies_headhunter))
+    print(get_table_vacancies(vacancies_headhunter, title='+HeadHunter Moscow'))
 
 
 if __name__ == '__main__':

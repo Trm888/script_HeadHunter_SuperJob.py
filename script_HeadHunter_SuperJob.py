@@ -16,8 +16,7 @@ def calculate_expected_salary(salary_from, salary_to):
     return salary
 
 
-
-def get_number_of_vacancies_and_rub_salary_superJob(language, secret_key):
+def get_number_vacancies_and_rub_salary_superJob(language, secret_key):
     api_url = 'https://api.superjob.ru/2.0/vacancies/'
     headers = {'X-Api-App-Id': secret_key}
     moscow_id = 4
@@ -32,7 +31,6 @@ def get_number_of_vacancies_and_rub_salary_superJob(language, secret_key):
                   'town': moscow_id,
                   'count': 100,
                   'page': page}
-
         response = requests.get(api_url, headers=headers, params=params)
         response.raise_for_status()
         vacancies = response.json()
@@ -52,10 +50,9 @@ def get_vacancies_superjob(languages, secret_key):
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']
     ]
-
     for language in languages:
-        salaries_from_superjob = get_number_of_vacancies_and_rub_salary_superJob(language, secret_key)[1]
-        number_of_vacancies = get_number_of_vacancies_and_rub_salary_superJob(language, secret_key)[0]
+        salaries_from_superjob = get_number_vacancies_and_rub_salary_superJob(language, secret_key)[1]
+        number_of_vacancies = get_number_vacancies_and_rub_salary_superJob(language, secret_key)[0]
         average_salary = 0
         if salaries_from_superjob:
             average_salary = int(mean(salaries_from_superjob))
@@ -70,9 +67,7 @@ def get_table_vacancies_superjob(information_on_vacancies):
     return table_instance.table
 
 
-
-def get_number_of_vacancies_and_rub_salary_headhunter(language):
-
+def get_number_vacancies_and_rub_salary_headhunter(language):
     salaries = []
     api_url = 'https://api.hh.ru/vacancies'
     moscow_id = 1
@@ -104,8 +99,8 @@ def get_vacancies_headhunter(languages):
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']]
     for language in languages:
-        salaries_from_headhunter = get_number_of_vacancies_and_rub_salary_headhunter(language)[1]
-        number_of_vacancies = get_number_of_vacancies_and_rub_salary_headhunter(language)[0]
+        salaries_from_headhunter = get_number_vacancies_and_rub_salary_headhunter(language)[1]
+        number_of_vacancies = get_number_vacancies_and_rub_salary_headhunter(language)[0]
         average_salary = 0
         if salaries_from_headhunter:
             average_salary = int(mean(salaries_from_headhunter))

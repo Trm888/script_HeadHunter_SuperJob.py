@@ -23,9 +23,10 @@ def predict_rub_salary_for_superJob(language, secret_key):
     moscow_id = 4
     page = 0
     pages_number = 1
+    keyword_job_search_option = 1
     salaries = []
     while page < pages_number:
-        params = {'srws': 1,
+        params = {'srws': keyword_job_search_option,
                   'skwc': 'particular',
                   'keys': f'{language}',
                   'town': moscow_id,
@@ -34,13 +35,13 @@ def predict_rub_salary_for_superJob(language, secret_key):
 
         response = requests.get(api_url, headers=headers, params=params)
         response.raise_for_status()
-        vacancies = response.json()['objects']
-        for vacancy in vacancies:
+        vacancies = response.json()
+        for vacancy in vacancies['objects']:
             salary_from = vacancy['payment_from']
             salary_to = vacancy['payment_to']
             if vacancy['currency'] == 'rub' and (salary_from or salary_to):
                 salaries.append(calculate_expected_salary(salary_from, salary_to))
-        pages_number = (response.json()['total'] - 1) / 100
+        pages_number = (vacancies['total'] - 1) / 100
         page += 1
     return salaries
 
@@ -55,7 +56,8 @@ def get_vacancies_superjob(languages, secret_key):
         api_url = 'https://api.superjob.ru/2.0/vacancies/'
         headers = {'X-Api-App-Id': secret_key}
         moscow_id = 4
-        params = {'srws': 1,
+        keyword_job_search_option = 1
+        params = {'srws': keyword_job_search_option,
                   'skwc': 'particular',
                   'keys': f'{language}',
                   'town': moscow_id}
@@ -91,14 +93,14 @@ def predict_rub_salary_headhunter(language):
                   }
         response = requests.get(api_url, params=params)
         response.raise_for_status()
-        vacancies = response.json()['items']
-        for vacancy in vacancies:
+        vacancies = response.json()
+        for vacancy in vacancies['items']:
             if vacancy['salary'] is not None:
                 salary_from = vacancy['salary']['from']
                 salary_to = vacancy['salary']['to']
                 if vacancy['salary']['currency'] == 'RUR':
                     salaries.append(calculate_expected_salary(salary_from, salary_to))
-        pages_number = response.json()['pages']
+        pages_number = vacancies['pages']
         page += 1
     return salaries
 

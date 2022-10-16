@@ -45,8 +45,8 @@ def get_job_stats_superJob(language, secret_key):
     return job_stats
 
 
-def get_vacancies_superjob(languages, secret_key):
-    vacancies = [
+def collect_statistics_by_languages_superjob(languages, secret_key):
+    stats = [
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']
     ]
@@ -55,9 +55,9 @@ def get_vacancies_superjob(languages, secret_key):
         average_salary = 0
         if job_stats[1]:
             average_salary = int(mean(job_stats[1]))
-        vacancies.append([language, job_stats[0],
+        stats.append([language, job_stats[0],
                           len(job_stats[1]), average_salary])
-    return vacancies
+    return stats
 
 
 def get_table_vacancies_superjob(information_on_vacancies):
@@ -93,8 +93,8 @@ def get_job_stats_headhunter(language):
     return job_stats
 
 
-def get_vacancies_headhunter(languages):
-    vacancies = [
+def collect_statistics_by_languages_headhunter(languages):
+    stats = [
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']]
     for language in languages:
@@ -102,10 +102,10 @@ def get_vacancies_headhunter(languages):
         average_salary = 0
         if job_stats[1]:
             average_salary = int(mean(job_stats[1]))
-        vacancies.append([language, job_stats[0],
+        stats.append([language, job_stats[0],
                           len(job_stats[1]),
                           average_salary])
-    return vacancies
+    return stats
 
 
 def get_table_vacancies_headhunter(information_on_vacancies_headhunter):

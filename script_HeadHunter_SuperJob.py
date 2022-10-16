@@ -16,7 +16,7 @@ def calculate_expected_salary(salary_from, salary_to):
     return salary
 
 
-def get_number_vacancies_and_rub_salary_superJob(language, secret_key):
+def get_job_stats_superJob(language, secret_key):
     api_url = 'https://api.superjob.ru/2.0/vacancies/'
     headers = {'X-Api-App-Id': secret_key}
     moscow_id = 4
@@ -41,8 +41,8 @@ def get_number_vacancies_and_rub_salary_superJob(language, secret_key):
                 salaries.append(calculate_expected_salary(salary_from, salary_to))
         pages_number = (vacancies['total'] - 1) / 100
         page += 1
-    number_of_vacancies_and_salaries = [vacancies['total'], salaries]
-    return number_of_vacancies_and_salaries
+    job_stats = [vacancies['total'], salaries]
+    return job_stats
 
 
 def get_vacancies_superjob(languages, secret_key):
@@ -51,13 +51,12 @@ def get_vacancies_superjob(languages, secret_key):
          'Вакансий обработано', 'Средняя зарплата']
     ]
     for language in languages:
-        salaries_from_superjob = get_number_vacancies_and_rub_salary_superJob(language, secret_key)[1]
-        number_of_vacancies = get_number_vacancies_and_rub_salary_superJob(language, secret_key)[0]
+        job_stats = get_job_stats_superJob(language, secret_key)
         average_salary = 0
-        if salaries_from_superjob:
-            average_salary = int(mean(salaries_from_superjob))
-        vacancies.append([language, number_of_vacancies,
-                          len(salaries_from_superjob), average_salary])
+        if job_stats[1]:
+            average_salary = int(mean(job_stats[1]))
+        vacancies.append([language, job_stats[0],
+                          len(job_stats[1]), average_salary])
     return vacancies
 
 
@@ -67,7 +66,7 @@ def get_table_vacancies_superjob(information_on_vacancies):
     return table_instance.table
 
 
-def get_number_vacancies_and_rub_salary_headhunter(language):
+def get_job_stats_headhunter(language):
     salaries = []
     api_url = 'https://api.hh.ru/vacancies'
     moscow_id = 1
@@ -90,8 +89,8 @@ def get_number_vacancies_and_rub_salary_headhunter(language):
                     salaries.append(calculate_expected_salary(salary_from, salary_to))
         pages_number = vacancies['pages']
         page += 1
-    number_of_vacancies_and_salaries = [vacancies['found'], salaries]
-    return number_of_vacancies_and_salaries
+    job_stats = [vacancies['found'], salaries]
+    return job_stats
 
 
 def get_vacancies_headhunter(languages):
@@ -99,13 +98,12 @@ def get_vacancies_headhunter(languages):
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']]
     for language in languages:
-        salaries_from_headhunter = get_number_vacancies_and_rub_salary_headhunter(language)[1]
-        number_of_vacancies = get_number_vacancies_and_rub_salary_headhunter(language)[0]
+        job_stats = get_job_stats_headhunter(language)
         average_salary = 0
-        if salaries_from_headhunter:
-            average_salary = int(mean(salaries_from_headhunter))
-        vacancies.append([language, number_of_vacancies,
-                          len(salaries_from_headhunter),
+        if job_stats[1]:
+            average_salary = int(mean(job_stats[1]))
+        vacancies.append([language, job_stats[0],
+                          len(job_stats[1]),
                           average_salary])
     return vacancies
 

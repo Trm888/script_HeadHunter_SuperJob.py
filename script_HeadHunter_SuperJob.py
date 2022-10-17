@@ -51,12 +51,12 @@ def collect_statistics_by_languages_superjob(languages, secret_key):
          'Вакансий обработано', 'Средняя зарплата']
     ]
     for language in languages:
-        job_stats = get_language_stats_superJob(language, secret_key)
+        number_of_vacancies, salaries = get_language_stats_superJob(language, secret_key)
         average_salary = 0
-        if job_stats[1]:
-            average_salary = int(mean(job_stats[1]))
-        stats.append([language, job_stats[0],
-                          len(job_stats[1]), average_salary])
+        if salaries:
+            average_salary = int(mean(salaries))
+        stats.append([language, number_of_vacancies,
+                      len(salaries), average_salary])
     return stats
 
 
@@ -92,18 +92,16 @@ def collect_statistics_by_languages_headhunter(languages):
         ['Язык программирования', 'Вакансий найдено',
          'Вакансий обработано', 'Средняя зарплата']]
     for language in languages:
-        job_stats = get_language_stats_headhunter(language)
+        number_of_vacancies, salaries = get_language_stats_headhunter(language)
         average_salary = 0
-        if job_stats[1]:
-            average_salary = int(mean(job_stats[1]))
-        stats.append([language, job_stats[0],
-                          len(job_stats[1]),
-                          average_salary])
+        if salaries:
+            average_salary = int(mean(salaries))
+        stats.append([language, number_of_vacancies,
+                      len(salaries), average_salary])
     return stats
 
 
 def get_table_vacancies(information_on_vacancies_headhunter, title):
-    # title = '+HeadHunter Moscow'
     table_instance = AsciiTable(information_on_vacancies_headhunter, title)
     return table_instance.table
 

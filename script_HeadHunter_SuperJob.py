@@ -76,7 +76,7 @@ def get_language_stats_headhunter(language):
         response.raise_for_status()
         vacancies = response.json()
         for vacancy in vacancies['items']:
-            if vacancy['salary'] is not None:
+            if vacancy['salary']:
                 salary_from = vacancy['salary']['from']
                 salary_to = vacancy['salary']['to']
                 if vacancy['salary']['currency'] == 'RUR':

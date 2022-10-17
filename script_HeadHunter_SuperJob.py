@@ -76,11 +76,12 @@ def get_language_stats_headhunter(language):
         response.raise_for_status()
         vacancies = response.json()
         for vacancy in vacancies['items']:
-            if vacancy['salary']:
-                salary_from = vacancy['salary']['from']
-                salary_to = vacancy['salary']['to']
-                if vacancy['salary']['currency'] == 'RUR':
-                    salaries.append(calculate_expected_salary(salary_from, salary_to))
+            if not vacancy['salary']:
+                continue
+            salary_from = vacancy['salary']['from']
+            salary_to = vacancy['salary']['to']
+            if vacancy['salary']['currency'] == 'RUR':
+                salaries.append(calculate_expected_salary(salary_from, salary_to))
         pages_number = vacancies['pages']
         page += 1
     language_stats = [vacancies['found'], salaries]

@@ -111,11 +111,11 @@ def main():
     env.read_env()
     secret_key = env.str("SECRET_KEY_SUPERJOB")
     languages = ['Java', 'Javascript', 'Python', 'C++', 'Swift', 'Go', 'Ruby', 'C#']
-    vacancies_superjob = collect_statistics_by_languages_superjob(languages, secret_key)
-    vacancies_headhunter = collect_statistics_by_languages_headhunter(languages)
-    print(get_table_vacancies(vacancies_superjob, title='+SuperJob Moscow'))
+    job_statistics_superjob = collect_statistics_by_languages_superjob(languages, secret_key)
+    job_statistics_headhunter = collect_statistics_by_languages_headhunter(languages)
+    print(get_table_vacancies(job_statistics_superjob, title='+SuperJob Moscow'))
     print()
-    print(get_table_vacancies(vacancies_headhunter, title='+HeadHunter Moscow'))
+    print(get_table_vacancies(job_statistics_headhunter, title='+HeadHunter Moscow'))
 
 
 if __name__ == '__main__':
